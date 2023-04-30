@@ -13,21 +13,23 @@ final class Centrifugo implements Realtime
     private string $apiKey;
     private string $secret;
 
-    private Client $client;
+    private ?Client $client = null;
 
     public function __construct(string $host, string $apiKey, string $secret)
     {
         $this->host = $host;
         $this->apiKey = $apiKey;
         $this->secret = $secret;
-
-        $this->init();
     }
 
     public function publish(string $channel, array $data): void
     {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         try {
-            $this->client->publish($channel, $data);
+            $this->client?->publish($channel, $data);
         } catch (Exception) {
             // todo: logger
         }
@@ -35,8 +37,12 @@ final class Centrifugo implements Realtime
 
     public function generateConnectionToken(string $userId, int $exp = 0): ?string
     {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         try {
-            return $this->client->generateConnectionToken($userId, $exp);
+            return $this->client?->generateConnectionToken($userId, $exp);
         } catch (Exception) {
             // todo: logger
         }
@@ -46,8 +52,12 @@ final class Centrifugo implements Realtime
 
     public function generateSubscriptionToken(string $userId, string $channel, int $exp = 0): ?string
     {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         try {
-            return $this->client->generateSubscriptionToken($userId, $channel, $exp);
+            return $this->client?->generateSubscriptionToken($userId, $channel, $exp);
         } catch (Exception) {
             // todo: logger
         }
@@ -55,10 +65,15 @@ final class Centrifugo implements Realtime
         return null;
     }
 
-    private function init(): void
+    private function connect(): void
     {
         $this->client = new Client($this->host . '/api');
         $this->client->setApiKey($this->apiKey);
         $this->client->setSecret($this->secret);
+    }
+
+    private function isConnected(): bool
+    {
+        return null !== $this->client;
     }
 }
