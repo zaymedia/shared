@@ -6,7 +6,7 @@ init: docker-down-clear \
 up: docker-up
 down: docker-down
 restart: down up
-check: lint analyze
+check: lint analyze #app-test
 
 # Docker
 docker-up:
@@ -49,6 +49,25 @@ cs-fix:
 
 analyze:
 	docker-compose run --rm php-cli composer psalm
+
+# Tests
+app-test:
+	docker-compose run --rm php-cli composer test
+
+app-test-coverage:
+	docker-compose run --rm php-cli composer test-coverage
+
+app-test-unit:
+	docker-compose run --rm php-cli composer test -- --testsuite=unit
+
+app-test-unit-coverage:
+	docker-compose run --rm php-cli composer test-coverage -- --testsuite=unit
+
+app-test-functional:
+	docker-compose run --rm php-cli composer test -- --testsuite=functional
+
+app-test-functional-coverage:
+	docker-compose run --rm php-cli composer test-coverage -- --testsuite=functional
 
 # git tag 1.0.0
 # git push --tags

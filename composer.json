@@ -27,6 +27,7 @@
     "doctrine/orm": "^2.12",
     "dutchie027/apnpush": "^0.30.0",
     "league/oauth2-server": "^8.3",
+    "middlewares/negotiation": "^2.1",
     "monolog/monolog": "^3.0",
     "php-amqplib/php-amqplib": "^3.0",
     "php-di/php-di": "^7.0",
