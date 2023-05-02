@@ -17,7 +17,7 @@ final class CursorPagination
         int $count,
         bool $isSortDescending,
         array $orderingBy,
-        string $field = 'id',
+        string $field,
         ?int $offset = null
     ): CursorPaginationResult {
         foreach ($orderingBy as $sort => $order) {
@@ -61,6 +61,11 @@ final class CursorPagination
         );
     }
 
+    public static function generateEmptyResult(): CursorPaginationResult
+    {
+        return new CursorPaginationResult(0, [], null);
+    }
+
     private static function totalCount(QueryBuilder $query, string $field): ?int
     {
         try {
@@ -78,7 +83,7 @@ final class CursorPagination
 
     private static function getNextCursor(array $items, bool $isSortDescending, string $field): ?string
     {
-        $max = null;
+        $id = null;
 
         $fieldAfterDot = self::getAfterDot($field);
 
@@ -90,22 +95,22 @@ final class CursorPagination
 
             $value = (int)$item[$fieldAfterDot];
 
-            if (null === $max) {
-                $max = $value;
+            if (null === $id) {
+                $id = $value;
             }
 
             if ($isSortDescending) {
-                if ($value < $max) {
-                    $max = $value;
+                if ($value < $id) {
+                    $id = $value;
                 }
             } else {
-                if ($value > $max) {
-                    $max = $value;
+                if ($value > $id) {
+                    $id = $value;
                 }
             }
         }
 
-        return self::encode($max, $field);
+        return self::encode($id, $field);
     }
 
     private static function encode(?int $value, string $field): ?string
