@@ -30,12 +30,15 @@ class Helper
         return $result;
     }
 
-    /** @param float[]|int[]|string[] $items */
     public static function toArrayInt(array $items): array
     {
         $arr = [];
 
         foreach ($items as $item) {
+            if (!is_numeric($item)) {
+                continue;
+            }
+
             $arr[] = (int)$item;
         }
 

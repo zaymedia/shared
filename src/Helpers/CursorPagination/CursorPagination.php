@@ -66,6 +66,51 @@ final class CursorPagination
         return new CursorPaginationResult(0, [], null);
     }
 
+    public static function encodeScore(int $start, int $offset): ?string
+    {
+        $value = json_encode([
+            'start' => $start,
+            'offset' => $offset,
+        ]);
+
+        try {
+            return base64_encode(base64_encode($value) . self::SALT);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    public static function decodeScore(?string $value): ?CursorScore
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        try {
+            $value = substr(
+                string: base64_decode($value, true),
+                offset: 0,
+                length: -1 * \strlen(self::SALT)
+            );
+
+            $value = base64_decode($value, true);
+
+            /** @var array{start: int|null, offset: int|null} $arr */
+            $arr = (array)json_decode($value, true);
+
+            if (!isset($arr['start']) || !isset($arr['offset'])) {
+                return null;
+            }
+
+            return new CursorScore(
+                start: $arr['start'],
+                offset: $arr['offset']
+            );
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
     private static function totalCount(QueryBuilder $query, string $field): ?int
     {
         try {
