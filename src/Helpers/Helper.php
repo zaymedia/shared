@@ -29,4 +29,16 @@ class Helper
 
         return $result;
     }
+
+    /** @param float[]|int[]|string[] $items */
+    public static function toArrayInt(array $items): array
+    {
+        $arr = [];
+
+        foreach ($items as $item) {
+            $arr[] = (int)$item;
+        }
+
+        return $arr;
+    }
 }
