@@ -76,12 +76,14 @@ class RabbitMQ implements Queue
                     callback: $callback
                 );
 
-                $this->channel->wait();
+                while ($this->channel->is_open()) {
+                    $this->channel->wait();
+                }
             } catch (AMQPTimeoutException|Exception) {
-                $this->resetConnection();
-                $this->sleep();
-                continue;
             }
+
+            $this->resetConnection();
+            $this->sleep();
         }
     }
 
