@@ -77,9 +77,7 @@ class RabbitMQ implements Queue
                 );
 
                 $this->channel->wait();
-            } catch (AMQPTimeoutException) {
-                continue;
-            } catch (Exception) {
+            } catch (AMQPTimeoutException|Exception) {
                 $this->resetConnection();
                 $this->sleep();
                 continue;
@@ -106,6 +104,12 @@ class RabbitMQ implements Queue
 
     private function resetConnection(): void
     {
+        try {
+            $this->channel?->close();
+            $this->connection?->close();
+        } catch (Exception) {
+        }
+
         $this->channel = null;
         $this->connection = null;
     }
