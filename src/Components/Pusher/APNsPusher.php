@@ -87,6 +87,10 @@ class APNsPusher
 
         $notifications = [];
         foreach ($tokens as $token) {
+            if (empty($token)) {
+                continue;
+            }
+
             $notification = new Notification($payload, $token);
 
             if (isset($data['id'])) {
@@ -94,6 +98,10 @@ class APNsPusher
             }
 
             $notifications[] = $notification;
+        }
+
+        if (empty($notifications)) {
+            return;
         }
 
         $client = new Client($authProvider, $this->productionBundleId === $bundleId);
