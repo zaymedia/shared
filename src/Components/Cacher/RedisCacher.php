@@ -8,21 +8,29 @@ use Redis;
 
 class RedisCacher implements Cacher
 {
-    private Redis $redis;
+    private string $host;
+    private int $port;
+    private string $password;
+
+    private ?Redis $redis = null;
 
     public function __construct(
         string $host,
         int $port,
         string $password
     ) {
-        $this->redis = new Redis();
-        $this->redis->connect($host, $port);
-        $this->redis->auth($password);
+        $this->host = $host;
+        $this->port = $port;
+        $this->password = $password;
     }
 
     public function get(string $key): ?string
     {
-        $value = $this->redis->get($key);
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        $value = $this->redis?->get($key);
 
         if (!\is_string($value)) {
             return null;
@@ -33,22 +41,38 @@ class RedisCacher implements Cacher
 
     public function set(string $key, string $value, ?int $ttl = null): bool
     {
-        return (bool)$this->redis->set($key, $value, $ttl);
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        return (bool)$this->redis?->set($key, $value, $ttl);
     }
 
     public function delete(string $key): void
     {
-        $this->redis->del($key);
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        $this->redis?->del($key);
     }
 
     public function expire(string $key, int $ttl): void
     {
-        $this->redis->expire($key, $ttl);
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        $this->redis?->expire($key, $ttl);
     }
 
     public function mGet(array $keys): array
     {
-        $result = $this->redis->mGet($keys);
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        $result = $this->redis?->mGet($keys);
 
         if (!\is_array($result)) {
             return [];
@@ -59,7 +83,11 @@ class RedisCacher implements Cacher
 
     public function zAdd(string $key, float $score, string|float|int $value): void
     {
-        $this->redis->zAdd($key, $score, $value);
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
+        $this->redis?->zAdd($key, $score, $value);
     }
 
     public function zRangeByScore(
@@ -69,6 +97,10 @@ class RedisCacher implements Cacher
         ?int $offset = null,
         ?int $count = null
     ): array {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         $options = [];
 
         if (null !== $offset && null !== $count) {
@@ -77,7 +109,7 @@ class RedisCacher implements Cacher
             ];
         }
 
-        $result = $this->redis->zRangeByScore(
+        $result = $this->redis?->zRangeByScore(
             key: $key,
             start: (string)$start,
             end: (string)$end,
@@ -98,6 +130,10 @@ class RedisCacher implements Cacher
         ?int $offset = null,
         ?int $count = null
     ): array {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         $options = [];
 
         if (null !== $offset && null !== $count) {
@@ -107,7 +143,7 @@ class RedisCacher implements Cacher
         }
 
         /** @var array|Redis $result */
-        $result = $this->redis->zRevRangeByScore(
+        $result = $this->redis?->zRevRangeByScore(
             key: $key,
             start: (string)$start,
             end: (string)$end,
@@ -119,5 +155,17 @@ class RedisCacher implements Cacher
         }
 
         return $result;
+    }
+
+    private function connect(): void
+    {
+        $this->redis = new Redis();
+        $this->redis->connect($this->host, $this->port);
+        $this->redis->auth($this->password);
+    }
+
+    private function isConnected(): bool
+    {
+        return null !== $this->redis;
     }
 }

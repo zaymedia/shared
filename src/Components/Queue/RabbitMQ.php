@@ -7,7 +7,6 @@ namespace ZayMedia\Shared\Components\Queue;
 use Exception;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMQ implements Queue
@@ -32,8 +31,12 @@ class RabbitMQ implements Queue
         $this->password = $password;
     }
 
-    public function publish(string $queue, array|string $message): void
-    {
+    public function publish(
+        string $queue,
+        array|string $message,
+        bool $durable = true,
+        bool $autoDelete = false
+    ): void {
         if (!$this->isConnected()) {
             $this->connect();
         }
@@ -46,7 +49,11 @@ class RabbitMQ implements Queue
             $message = json_encode($message);
         }
 
-        $this->declareQueue($queue);
+        $this->declareQueue(
+            queue: $queue,
+            durable: $durable,
+            autoDelete: $autoDelete
+        );
 
         $this->channel->basic_publish(
             msg: new AMQPMessage($message),
@@ -54,8 +61,13 @@ class RabbitMQ implements Queue
         );
     }
 
-    public function consume(string $queue, callable $callback): void
-    {
+    public function consume(
+        string $queue,
+        callable $callback,
+        bool $durable = true,
+        bool $autoDelete = false,
+        bool $noAck = true
+    ): void {
         while (true) {
             if (!$this->isConnected()) {
                 $this->connect();
@@ -67,23 +79,26 @@ class RabbitMQ implements Queue
                 continue;
             }
 
-            $this->declareQueue($queue);
+            $this->declareQueue(
+                queue: $queue,
+                durable: $durable,
+                autoDelete: $autoDelete
+            );
 
             try {
                 $this->channel->basic_consume(
                     queue: $queue,
-                    no_ack: true,
+                    no_ack: $noAck,
                     callback: $callback
                 );
 
                 while ($this->channel->is_open()) {
                     $this->channel->wait();
                 }
-            } catch (AMQPTimeoutException|Exception) {
+            } catch (Exception) {
             }
 
             $this->resetConnection();
-            $this->sleep();
         }
     }
 
@@ -121,17 +136,17 @@ class RabbitMQ implements Queue
         return $this->connection?->isConnected() ?? false;
     }
 
-    private function declareQueue(string $queue): void
+    private function declareQueue(string $queue, bool $durable, bool $autoDelete): void
     {
         $this->channel?->queue_declare(
             queue: $queue,
-            durable: true,
-            auto_delete: false
+            durable: $durable,
+            auto_delete: $autoDelete,
         );
     }
 
     private function sleep(): void
     {
-        sleep(10);
+        sleep(30);
     }
 }
