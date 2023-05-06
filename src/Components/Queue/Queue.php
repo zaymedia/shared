@@ -9,15 +9,15 @@ interface Queue
     public function publish(
         string $queue,
         array|string $message,
-        bool $durable,
-        bool $autoDelete
+        bool $durable = true,
+        bool $autoDelete = false
     ): void;
 
     public function consume(
         string $queue,
         callable $callback,
-        bool $durable,
-        bool $autoDelete,
-        bool $noAck
+        bool $durable = true,
+        bool $autoDelete = false,
+        bool $noAck = true
     ): void;
 }
