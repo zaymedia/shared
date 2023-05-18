@@ -6,5 +6,5 @@ namespace ZayMedia\Shared\Components\SmsSender;
 
 interface SmsSender
 {
-    public function send(string $number, string $text): void;
+    public function send(string $number, string $text, ?string $ip): void;
 }

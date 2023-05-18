@@ -19,7 +19,7 @@ class SmsCRu implements SmsSender
         $this->url = $url;
     }
 
-    public function send(string $number, string $text): void
+    public function send(string $number, string $text, ?string $ip): void
     {
         $url = $this->url
             . '?login=' . urlencode($this->login)
@@ -28,6 +28,10 @@ class SmsCRu implements SmsSender
             . '&mes=' . urlencode($text)
             . '&sender=' . urlencode($this->sender)
             . '&fmt=3';
+
+        if (null !== $ip) {
+            $url .= '&userip=' . urlencode($ip);
+        }
 
         file_get_contents($url);
     }

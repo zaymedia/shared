@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ZayMedia\Shared\Components\Serializer;
 
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -19,6 +20,7 @@ final class Denormalizer
      * @template T
      * @param class-string<T> $type
      * @return T
+     * @throws ExceptionInterface
      */
     public function denormalizeQuery(mixed $data, string $type): object
     {
@@ -34,6 +36,7 @@ final class Denormalizer
      * @template T
      * @param class-string<T> $type
      * @return T
+     * @throws ExceptionInterface
      */
     public function denormalize(mixed $data, string $type): object
     {
@@ -49,6 +52,7 @@ final class Denormalizer
      * @template T
      * @param class-string<T> $type
      * @return T
+     * @throws ExceptionInterface
      */
     public function denormalizeWithExtraAttributes(mixed $data, string $type): object
     {

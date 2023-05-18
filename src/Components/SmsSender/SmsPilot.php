@@ -17,7 +17,7 @@ class SmsPilot implements SmsSender
         $this->url = $url;
     }
 
-    public function send(string $number, string $text): void
+    public function send(string $number, string $text, ?string $ip): void
     {
         $url = $this->url
             . '?send=' . urlencode($text)
