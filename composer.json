@@ -23,6 +23,7 @@
         "ext-mbstring": "^8.1",
         "ext-openssl": "*",
         "ext-redis": "*",
+        "akrabat/ip-address-middleware": "^2.1",
         "centrifugal/phpcent": "^5.0",
         "doctrine/orm": "^2.12",
         "dutchie027/apnpush": "^0.30.0",
