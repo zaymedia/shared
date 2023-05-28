@@ -44,17 +44,25 @@ final class Authenticate implements MiddlewareInterface
         return $identity;
     }
 
-    public static function getAccessToken(ServerRequestInterface $request): ?string
+    public static function getAccessToken(ServerRequestInterface $request): string
     {
-        if (!$request->hasHeader('authorization')) {
-            return null;
+        $token = null;
+
+        if ($request->hasHeader('authorization')) {
+            $header = $request->getHeaderLine('authorization');
+
+            $token = trim(str_replace('Bearer', '', $header));
+
+            if (empty($token)) {
+                $token = null;
+            }
         }
 
-        $header = $request->getHeaderLine('authorization');
+        if ($token === null) {
+            throw new UnauthorizedHttpException($request);
+        }
 
-        $token = trim(str_replace('Bearer', '', $header));
-
-        return (!empty($token)) ? $token : null;
+        return $token;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
