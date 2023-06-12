@@ -9,4 +9,8 @@ final class Security
     public const BEARER_AUTH = [
         'bearerAuth' => '{}',
     ];
+
+    public const API_KEY = [
+        'ApiKeyAuth' => '{}'
+    ];
 }
