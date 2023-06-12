@@ -33,4 +33,8 @@ interface Cacher
         ?int $offset = null,
         ?int $count = null
     ): array;
+
+    public function increase(string $key, int $value): void;
+
+    public function decrease(string $key, int $value): void;
 }

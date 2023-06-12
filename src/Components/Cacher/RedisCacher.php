@@ -157,6 +157,16 @@ class RedisCacher implements Cacher
         return $result;
     }
 
+    public function increase(string $key, int $value): void
+    {
+        $this->redis?->incrBy($key, $value);
+    }
+
+    public function decrease(string $key, int $value): void
+    {
+        $this->redis?->decrBy($key, $value);
+    }
+
     private function connect(): void
     {
         $this->redis = new Redis();
