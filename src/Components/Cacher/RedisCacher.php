@@ -159,11 +159,19 @@ class RedisCacher implements Cacher
 
     public function increase(string $key, int $value): void
     {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         $this->redis?->incrBy($key, $value);
     }
 
     public function decrease(string $key, int $value): void
     {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+
         $this->redis?->decrBy($key, $value);
     }
 
