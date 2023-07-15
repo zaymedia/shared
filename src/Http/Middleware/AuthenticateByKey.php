@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Slim\Exception\HttpUnauthorizedException;
+use ZayMedia\Shared\Http\Exception\UnauthorizedHttpException;
 
 final class AuthenticateByKey implements MiddlewareInterface
 {
@@ -37,7 +37,7 @@ final class AuthenticateByKey implements MiddlewareInterface
         $apiKey = self::findapiKey($request);
 
         if ($apiKey === null) {
-            throw new HttpUnauthorizedException($request);
+            throw new UnauthorizedHttpException($request);
         }
 
         return $apiKey;
@@ -52,7 +52,7 @@ final class AuthenticateByKey implements MiddlewareInterface
         $apiKey = $request->getHeaderLine('apiKey');
 
         if (!$this->validateApiKey($apiKey)) {
-            throw new HttpUnauthorizedException($request);
+            throw new UnauthorizedHttpException($request);
         }
 
         return $handler->handle($request->withAttribute(self::ATTRIBUTE, $apiKey));
