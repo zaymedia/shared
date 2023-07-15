@@ -11,6 +11,6 @@ final class Security
     ];
 
     public const API_KEY = [
-        'ApiKeyAuth' => '{}',
+        'apiKeyAuth' => '{}',
     ];
 }

@@ -60,6 +60,6 @@ final class AuthenticateByKey implements MiddlewareInterface
 
     private function validateApiKey(string $key): bool
     {
-        return $key !== $this->key;
+        return $key === $this->key;
     }
 }
