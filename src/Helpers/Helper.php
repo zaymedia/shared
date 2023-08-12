@@ -20,7 +20,7 @@ class Helper
                     continue;
                 }
 
-                if ($item[$key] === $id) {
+                if ((string)$item[$key] === (string)$id) {
                     $result[] = $item;
                     break;
                 }
