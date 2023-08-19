@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ZayMedia\Shared\Components;
 
+use Exception;
 use GuzzleHttp\Client;
 
 final class RestServiceClient
@@ -48,7 +49,7 @@ final class RestServiceClient
     {
         try {
             return (array)json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\Exception) {
+        } catch (Exception) {
             return [];
         }
     }

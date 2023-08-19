@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ZayMedia\Shared\Helpers\CursorPagination;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Exception;
 
 final class CursorPagination
 {
@@ -45,19 +46,30 @@ final class CursorPagination
         }
 
         try {
-            $items = $query
-                ->setMaxResults($count)
-                ->executeQuery();
-            $items = $items
+            $rows = $query
+                ->setMaxResults($count + 1)
+                ->executeQuery()
                 ->fetchAllAssociative();
-        } catch (\Exception) {
-            $items = [];
+        } catch (Exception) {
+            $rows = [];
         }
+
+        $items = [];
+
+        foreach ($rows as $row) {
+            if (\count($items) >= $count) {
+                break;
+            }
+
+            $items[] = $row;
+        }
+
+        $cursor = (\count($rows) > $count) ? self::getNextCursor($items, $isSortDescending, $field) : null;
 
         return new CursorPaginationResult(
             count: $totalCount,
             items: $items,
-            cursor: self::getNextCursor($items, $isSortDescending, $field)
+            cursor: $cursor
         );
     }
 
@@ -75,7 +87,7 @@ final class CursorPagination
 
         try {
             return base64_encode(base64_encode($value) . self::SALT);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -106,7 +118,7 @@ final class CursorPagination
                 start: $arr['start'],
                 offset: $arr['offset']
             );
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -120,7 +132,7 @@ final class CursorPagination
                 ->fetchAssociative();
 
             return (int)($result['count'] ?? 0);
-        } catch (\Exception) {
+        } catch (Exception) {
         }
 
         return null;
@@ -170,7 +182,7 @@ final class CursorPagination
 
         try {
             return base64_encode(base64_encode($value) . self::SALT);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -191,7 +203,7 @@ final class CursorPagination
             $value = base64_decode($value, true);
 
             return (array)json_decode($value, true);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
