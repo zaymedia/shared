@@ -127,7 +127,7 @@ final class CursorPagination
     {
         try {
             $result = $query
-                ->select('COUNT(' . $field . ') AS count')
+                ->select('COUNT(DISTINCT ' . $field . ') AS count')
                 ->setFirstResult(0)
                 ->fetchAssociative();
 
