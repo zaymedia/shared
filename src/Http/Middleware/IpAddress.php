@@ -22,4 +22,12 @@ final class IpAddress extends \RKA\Middleware\IpAddress
     {
         return (string)$request->getAttribute(self::ATTRIBUTE);
     }
+
+    public static function getReal(ServerRequestInterface $request): string
+    {
+        /** @var array{REMOTE_ADDR: string} $serverParams */
+        $serverParams = $request->getServerParams();
+
+        return $serverParams['REMOTE_ADDR'];
+    }
 }
