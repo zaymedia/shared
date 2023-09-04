@@ -44,4 +44,9 @@ class Helper
 
         return $arr;
     }
+
+    public static function ucFirst(string $str): string
+    {
+        return mb_strtoupper(mb_substr($str, 0, 1)) . mb_substr($str, 1);
+    }
 }
