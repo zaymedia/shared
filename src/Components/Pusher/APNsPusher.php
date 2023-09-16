@@ -22,8 +22,7 @@ class APNsPusher
         private readonly string $privateKeyPath,
         private readonly string $privateKeySecret,
         private readonly string $productionBundleId
-    ) {
-    }
+    ) {}
 
     /**
      * @param string[] $tokens

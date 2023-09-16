@@ -11,8 +11,7 @@ final class FrontendUrlTwigExtension extends AbstractExtension
 {
     public function __construct(
         private readonly FrontendUrlGenerator $url
-    ) {
-    }
+    ) {}
 
     public function getFunctions(): array
     {

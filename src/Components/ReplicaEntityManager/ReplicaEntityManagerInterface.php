@@ -6,6 +6,4 @@ namespace ZayMedia\Shared\Components\ReplicaEntityManager;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-interface ReplicaEntityManagerInterface extends EntityManagerInterface
-{
-}
+interface ReplicaEntityManagerInterface extends EntityManagerInterface {}

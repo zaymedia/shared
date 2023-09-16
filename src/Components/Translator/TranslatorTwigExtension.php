@@ -12,8 +12,7 @@ final class TranslatorTwigExtension extends AbstractExtension
 {
     public function __construct(
         private readonly TranslatorInterface $translator
-    ) {
-    }
+    ) {}
 
     public function getFunctions(): array
     {

@@ -9,8 +9,7 @@ class FCMPusher
     public function __construct(
         private readonly string $key,
         private readonly string $host = 'https://fcm.googleapis.com/fcm/send'
-    ) {
-    }
+    ) {}
 
     public function send(
         ?string $thread,

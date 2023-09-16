@@ -10,6 +10,5 @@ final class CursorPaginationResult
         public readonly ?int $count,
         public readonly array $items,
         public readonly ?string $cursor,
-    ) {
-    }
+    ) {}
 }

@@ -16,8 +16,7 @@ final class HttpNotFoundRedirectExceptionHandler implements MiddlewareInterface
     public function __construct(
         private readonly string $location,
         private readonly int $code = 302
-    ) {
-    }
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

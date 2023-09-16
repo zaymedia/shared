@@ -7,6 +7,4 @@ namespace ZayMedia\Shared\Components\ReplicaEntityManager;
 use Doctrine\ORM\EntityManager;
 
 /** @psalm-suppress InvalidExtendClass */
-class ReplicaEntityManager extends EntityManager implements ReplicaEntityManagerInterface
-{
-}
+class ReplicaEntityManager extends EntityManager implements ReplicaEntityManagerInterface {}

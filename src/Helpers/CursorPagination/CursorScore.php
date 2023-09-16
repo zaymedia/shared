@@ -9,6 +9,5 @@ final class CursorScore
     public function __construct(
         public readonly int $start,
         public readonly int $offset,
-    ) {
-    }
+    ) {}
 }

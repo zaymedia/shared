@@ -13,8 +13,7 @@ final class Denormalizer
 {
     public function __construct(
         private readonly DenormalizerInterface $denormalizer
-    ) {
-    }
+    ) {}
 
     /**
      * @template T

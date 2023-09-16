@@ -18,6 +18,7 @@ interface Queue
         callable $callback,
         bool $durable = true,
         bool $autoDelete = false,
-        bool $noAck = true
+        bool $noAck = true,
+        int $count = 100
     ): void;
 }

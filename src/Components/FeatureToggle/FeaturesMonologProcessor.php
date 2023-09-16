@@ -11,8 +11,7 @@ final class FeaturesMonologProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly FeaturesContext $context
-    ) {
-    }
+    ) {}
 
     public function __invoke(LogRecord $record): LogRecord
     {

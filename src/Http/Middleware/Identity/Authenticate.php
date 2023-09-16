@@ -19,8 +19,7 @@ final class Authenticate implements MiddlewareInterface
 
     public function __construct(
         private readonly ResourceServer $server,
-    ) {
-    }
+    ) {}
 
     public static function findIdentity(ServerRequestInterface $request): ?Identity
     {

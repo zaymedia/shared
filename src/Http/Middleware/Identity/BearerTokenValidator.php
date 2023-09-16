@@ -36,8 +36,7 @@ final class BearerTokenValidator implements AuthorizationValidatorInterface
         private readonly AccessTokenRepositoryInterface $accessTokenRepository,
         /** @var non-empty-string $contents */
         private readonly string $contents = 'z',
-    ) {
-    }
+    ) {}
 
     public function setPublicKey(CryptKey $key): void
     {

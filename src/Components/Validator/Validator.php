@@ -10,8 +10,7 @@ final class Validator
 {
     public function __construct(
         private readonly ValidatorInterface $validator
-    ) {
-    }
+    ) {}
 
     public function validate(object $object): void
     {
