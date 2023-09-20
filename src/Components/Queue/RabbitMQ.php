@@ -88,7 +88,10 @@ class RabbitMQ implements Queue
             );
 
             try {
-                $this->channel->basic_qos($prefetchSize, $prefetchCount, true);
+                if ($withAck) {
+                    $this->channel->basic_qos($prefetchSize, $prefetchCount, false);
+                }
+
                 $this->channel->basic_consume(
                     queue: $queue,
                     no_ack: !$withAck,
