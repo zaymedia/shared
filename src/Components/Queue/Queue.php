@@ -18,7 +18,7 @@ interface Queue
         callable $callback,
         bool $durable = true,
         bool $autoDelete = false,
-        bool $noAck = true,
-        int $count = 100
+        bool $withAck = false,
+        int $prefetchCount = 0
     ): void;
 }

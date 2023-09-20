@@ -66,8 +66,8 @@ class RabbitMQ implements Queue
         callable $callback,
         bool $durable = true,
         bool $autoDelete = false,
-        bool $noAck = true,
-        int $count = 100
+        bool $withAck = false,
+        int $prefetchCount = 0
     ): void {
         while (true) {
             if (!$this->isConnected()) {
@@ -87,10 +87,10 @@ class RabbitMQ implements Queue
             );
 
             try {
-                $this->channel->basic_qos(0, $count, true);
+                $this->channel->basic_qos($prefetchCount, $prefetchCount, true);
                 $this->channel->basic_consume(
                     queue: $queue,
-                    no_ack: $noAck,
+                    no_ack: !$withAck,
                     callback: $callback,
                 );
 
