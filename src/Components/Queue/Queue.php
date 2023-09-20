@@ -19,6 +19,7 @@ interface Queue
         bool $durable = true,
         bool $autoDelete = false,
         bool $withAck = false,
-        int $prefetchCount = 0
+        int $prefetchSize = 0,
+        int $prefetchCount = 0,
     ): void;
 }

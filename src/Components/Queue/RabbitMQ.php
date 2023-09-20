@@ -67,6 +67,7 @@ class RabbitMQ implements Queue
         bool $durable = true,
         bool $autoDelete = false,
         bool $withAck = false,
+        int $prefetchSize = 0,
         int $prefetchCount = 0
     ): void {
         while (true) {
@@ -87,7 +88,7 @@ class RabbitMQ implements Queue
             );
 
             try {
-                $this->channel->basic_qos($prefetchCount, $prefetchCount, true);
+                $this->channel->basic_qos($prefetchSize, $prefetchCount, true);
                 $this->channel->basic_consume(
                     queue: $queue,
                     no_ack: !$withAck,
