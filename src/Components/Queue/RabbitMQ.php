@@ -160,8 +160,8 @@ class RabbitMQ implements Queue
 
         if (null !== $ttl) {
             $arguments['x-message-ttl'] = $ttl * 1000;
-            $arguments['x-dead-letter-exchange'] = $this->dlxExchange;
-            $arguments['x-dead-letter-routing-key'] = $this->dlxQueue;
+            //            $arguments['x-dead-letter-exchange'] = $this->dlxExchange;
+            //            $arguments['x-dead-letter-routing-key'] = $this->dlxQueue;
         }
 
         $this->channel?->queue_declare(
@@ -171,17 +171,17 @@ class RabbitMQ implements Queue
             arguments: new AMQPTable($arguments)
         );
 
-        if (null !== $ttl) {
-            $this->channel?->queue_declare(
-                queue: $this->dlxQueue,
-                durable: true,
-                auto_delete: false,
-                arguments: new AMQPTable(['x-message-ttl' => 300000])
-            );
-
-            $this->channel?->exchange_declare($this->dlxExchange, 'direct');
-            $this->channel?->queue_bind($this->dlxQueue, $this->dlxExchange);
-        }
+        //        if (null !== $ttl) {
+        //            $this->channel?->queue_declare(
+        //                queue: $this->dlxQueue,
+        //                durable: true,
+        //                auto_delete: false,
+        //                arguments: new AMQPTable(['x-message-ttl' => 300000])
+        //            );
+        //
+        //            $this->channel?->exchange_declare($this->dlxExchange, 'direct');
+        //            $this->channel?->queue_bind($this->dlxQueue, $this->dlxExchange);
+        //        }
     }
 
     private function sleep(): void
