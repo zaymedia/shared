@@ -21,6 +21,7 @@ class RabbitMQ implements Queue
     private string $password;
 
     private string $dlxExchange = 'dlx_exchange';
+    private string $dlxQueue = 'dlx_queue';
 
     public function __construct(
         string $host,
@@ -53,14 +54,11 @@ class RabbitMQ implements Queue
             $message = json_encode($message);
         }
 
-        $this->channel->exchange_declare($this->dlxExchange, 'direct');
-
         $this->declareQueue(
             queue: $queue,
             durable: $durable,
             autoDelete: $autoDelete,
             ttl: $ttl,
-            dlxExchange: $this->dlxExchange
         );
 
         $this->channel->basic_publish(
@@ -90,13 +88,11 @@ class RabbitMQ implements Queue
                 continue;
             }
 
-
             $this->declareQueue(
                 queue: $queue,
                 durable: $durable,
                 autoDelete: $autoDelete,
                 ttl: $ttl,
-                dlxExchange: $this->dlxExchange
             );
 
             try {
@@ -159,16 +155,13 @@ class RabbitMQ implements Queue
         bool $durable,
         bool $autoDelete,
         ?int $ttl = null,
-        ?string $dlxExchange = null
     ): void {
         $arguments = [];
 
         if (null !== $ttl) {
             $arguments['x-message-ttl'] = $ttl * 1000;
-        }
-
-        if (null !== $dlxExchange) {
-            $arguments['x-dead-letter-exchange'] = $dlxExchange;
+            $arguments['x-dead-letter-exchange'] = $this->dlxExchange;
+            $arguments['x-dead-letter-routing-key'] = $this->dlxQueue;
         }
 
         $this->channel?->queue_declare(
@@ -178,8 +171,16 @@ class RabbitMQ implements Queue
             arguments: new AMQPTable($arguments)
         );
 
-        if (null !== $dlxExchange) {
-            $this->channel?->queue_bind($queue, $dlxExchange);
+        if (null !== $ttl) {
+            $this->channel?->queue_declare(
+                queue: $this->dlxQueue,
+                durable: true,
+                auto_delete: false,
+                arguments: new AMQPTable(['x-message-ttl' => 300000])
+            );
+
+            $this->channel?->exchange_declare($this->dlxExchange, 'direct');
+            $this->channel?->queue_bind($this->dlxQueue, $this->dlxExchange);
         }
     }
 
