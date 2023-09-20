@@ -20,6 +20,8 @@ class RabbitMQ implements Queue
     private string $user;
     private string $password;
 
+    private string $dlxExchange = 'dlx_exchange';
+
     public function __construct(
         string $host,
         int $port,
@@ -51,11 +53,14 @@ class RabbitMQ implements Queue
             $message = json_encode($message);
         }
 
+        $this->channel->exchange_declare($this->dlxExchange, 'direct');
+
         $this->declareQueue(
             queue: $queue,
             durable: $durable,
             autoDelete: $autoDelete,
-            ttl: $ttl
+            ttl: $ttl,
+            dlxExchange: $this->dlxExchange
         );
 
         $this->channel->basic_publish(
@@ -85,15 +90,13 @@ class RabbitMQ implements Queue
                 continue;
             }
 
-            $dlxExchange = 'dlx_exchange';
-            $this->channel->exchange_declare($dlxExchange, 'direct');
 
             $this->declareQueue(
                 queue: $queue,
                 durable: $durable,
                 autoDelete: $autoDelete,
                 ttl: $ttl,
-                dlxExchange: $dlxExchange
+                dlxExchange: $this->dlxExchange
             );
 
             try {
