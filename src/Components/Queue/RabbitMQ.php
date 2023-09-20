@@ -161,7 +161,7 @@ class RabbitMQ implements Queue
         $arguments = [];
 
         if (null !== $ttl) {
-            $arguments['x-message-ttl'] = ['I', $ttl * 1000];
+            $arguments['x-message-ttl'] = $ttl * 1000;
         }
 
         if (null !== $dlxExchange) {
