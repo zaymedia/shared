@@ -8,6 +8,7 @@ use Exception;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Wire\AMQPTable;
 
 class RabbitMQ implements Queue
 {
@@ -171,7 +172,7 @@ class RabbitMQ implements Queue
             queue: $queue,
             durable: $durable,
             auto_delete: $autoDelete,
-            arguments: $arguments
+            arguments: new AMQPTable($arguments)
         );
 
         if (null !== $dlxExchange) {
