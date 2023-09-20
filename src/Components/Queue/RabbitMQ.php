@@ -35,7 +35,8 @@ class RabbitMQ implements Queue
         string $queue,
         array|string $message,
         bool $durable = true,
-        bool $autoDelete = false
+        bool $autoDelete = false,
+        ?int $ttl = null
     ): void {
         if (!$this->isConnected()) {
             $this->connect();
@@ -52,7 +53,8 @@ class RabbitMQ implements Queue
         $this->declareQueue(
             queue: $queue,
             durable: $durable,
-            autoDelete: $autoDelete
+            autoDelete: $autoDelete,
+            ttl: $ttl
         );
 
         $this->channel->basic_publish(
@@ -68,7 +70,8 @@ class RabbitMQ implements Queue
         bool $autoDelete = false,
         bool $withAck = false,
         int $prefetchSize = 0,
-        int $prefetchCount = 0
+        int $prefetchCount = 0,
+        ?int $ttl = null
     ): void {
         while (true) {
             if (!$this->isConnected()) {
@@ -81,10 +84,15 @@ class RabbitMQ implements Queue
                 continue;
             }
 
+            $dlxExchange = 'dlx_exchange';
+            $this->channel->exchange_declare($dlxExchange, 'direct');
+
             $this->declareQueue(
                 queue: $queue,
                 durable: $durable,
-                autoDelete: $autoDelete
+                autoDelete: $autoDelete,
+                ttl: $ttl,
+                dlxExchange: $dlxExchange
             );
 
             try {
@@ -142,13 +150,33 @@ class RabbitMQ implements Queue
         return $this->connection?->isConnected() ?? false;
     }
 
-    private function declareQueue(string $queue, bool $durable, bool $autoDelete): void
-    {
+    private function declareQueue(
+        string $queue,
+        bool $durable,
+        bool $autoDelete,
+        ?int $ttl = null,
+        ?string $dlxExchange = null
+    ): void {
+        $arguments = [];
+
+        if (null !== $ttl) {
+            $arguments['x-message-ttl'] = $ttl * 1000;
+        }
+
+        if (null !== $dlxExchange) {
+            $arguments['x-dead-letter-exchange'] = $dlxExchange;
+        }
+
         $this->channel?->queue_declare(
             queue: $queue,
             durable: $durable,
             auto_delete: $autoDelete,
+            arguments: $arguments
         );
+
+        if (null !== $dlxExchange) {
+            $this->channel?->queue_bind($queue, $dlxExchange);
+        }
     }
 
     private function sleep(): void

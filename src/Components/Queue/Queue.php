@@ -10,7 +10,8 @@ interface Queue
         string $queue,
         array|string $message,
         bool $durable = true,
-        bool $autoDelete = false
+        bool $autoDelete = false,
+        ?int $ttl = null
     ): void;
 
     public function consume(
@@ -21,5 +22,6 @@ interface Queue
         bool $withAck = false,
         int $prefetchSize = 0,
         int $prefetchCount = 0,
+        ?int $ttl = null
     ): void;
 }
