@@ -70,7 +70,8 @@ final class Centrifugo implements Realtime
         $this->client = new Client($this->host . '/api');
         $this->client->setApiKey($this->apiKey);
         $this->client->setSecret($this->secret);
-        $this->client->setConnectTimeoutOption(20);
+        $this->client->setConnectTimeoutOption(5);
+        $this->client->setTimeoutOption(1);
         $this->client->forceIpResolveV4();
     }
 

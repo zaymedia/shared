@@ -15,6 +15,9 @@ use Exception;
 
 class APNsPusher
 {
+    private const CONNECT_TIMEOUT = 5;
+    private const TIMEOUT = 1;
+
     public function __construct(
         private readonly string $keyId,
         private readonly string $teamId,
@@ -103,7 +106,15 @@ class APNsPusher
             return;
         }
 
-        $client = new Client($authProvider, $this->productionBundleId === $bundleId);
+        $client = new Client(
+            authProvider: $authProvider,
+            isProductionEnv: $this->productionBundleId === $bundleId,
+            curlOptions: [
+                CURLOPT_CONNECTTIMEOUT => self::CONNECT_TIMEOUT,
+                CURLOPT_TIMEOUT => self::TIMEOUT,
+            ]
+        );
+
         $client->addNotifications($notifications);
 
         $client->push();
@@ -142,7 +153,14 @@ class APNsPusher
             $notifications[] = $notification;
         }
 
-        $client = new Client($authProvider, $this->productionBundleId === $bundleId);
+        $client = new Client(
+            authProvider: $authProvider,
+            isProductionEnv: $this->productionBundleId === $bundleId,
+            curlOptions: [
+                CURLOPT_CONNECTTIMEOUT => self::CONNECT_TIMEOUT,
+                CURLOPT_TIMEOUT => self::TIMEOUT,
+            ]
+        );
         $client->addNotifications($notifications);
 
         $client->push();

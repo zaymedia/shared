@@ -6,6 +6,9 @@ namespace ZayMedia\Shared\Components\Pusher;
 
 class FCMPusher
 {
+    private const CONNECT_TIMEOUT = 5;
+    private const TIMEOUT = 1;
+
     public function __construct(
         private readonly string $key,
         private readonly string $host = 'https://fcm.googleapis.com/fcm/send'
@@ -60,6 +63,8 @@ class FCMPusher
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 
         curl_exec($ch);
         curl_close($ch);
@@ -93,6 +98,8 @@ class FCMPusher
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 
         curl_exec($ch);
         curl_close($ch);
