@@ -69,5 +69,5 @@ app-test-functional:
 app-test-functional-coverage:
 	docker-compose run --rm php-cli composer test-coverage -- --testsuite=functional
 
-# git tag 1.0.51
+# git tag 1.0.52
 # git push --tags

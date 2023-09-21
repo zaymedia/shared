@@ -176,7 +176,7 @@ class RabbitMQ implements Queue
                 queue: $this->dlxQueue,
                 durable: true,
                 auto_delete: false,
-                arguments: new AMQPTable(['x-message-ttl' => 300000])
+                arguments: new AMQPTable(['x-message-ttl' => 5 * 60 * 1000])
             );
 
             $this->channel?->exchange_declare($this->dlxExchange, 'direct');
