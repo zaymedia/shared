@@ -81,7 +81,7 @@ class RedisCacher implements Cacher
         return $result;
     }
 
-    public function zAdd(string $key, float $score, string|float|int $value): void
+    public function zAdd(string $key, float $score, float|int|string $value): void
     {
         if (!$this->isConnected()) {
             $this->connect();

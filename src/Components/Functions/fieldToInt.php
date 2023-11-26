@@ -30,7 +30,7 @@ function fieldToIntOrNull(?array $data, string $field): ?int
     return null;
 }
 
-function toInt(string|int|null $value): int
+function toInt(null|int|string $value): int
 {
     return (int)$value;
 }

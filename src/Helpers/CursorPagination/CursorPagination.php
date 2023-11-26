@@ -73,6 +73,66 @@ final class CursorPagination
         );
     }
 
+    /** @param array<string, string> $orderingBy */
+    public static function generateResultWithoutCount(
+        QueryBuilder $query,
+        ?string $cursor,
+        int $count,
+        bool $isSortDescending,
+        array $orderingBy,
+        string $field,
+        ?int $offset = null
+    ): CursorPaginationResult {
+        foreach ($orderingBy as $sort => $order) {
+            $query->addOrderBy($sort, $order);
+        }
+
+        if (null !== $offset) {
+            $query->setFirstResult($offset);
+        } else {
+            $cursorData = self::decode($cursor);
+
+            if (null !== $cursorData) {
+                if (isset($cursorData[$field])) {
+                    $id = (int)$cursorData[$field];
+
+                    if ($isSortDescending) {
+                        $query->andWhere($field . ' < ' . $id);
+                    } else {
+                        $query->andWhere($field . ' > ' . $id);
+                    }
+                }
+            }
+        }
+
+        try {
+            $rows = $query
+                ->setMaxResults($count + 1)
+                ->executeQuery()
+                ->fetchAllAssociative();
+        } catch (Exception) {
+            $rows = [];
+        }
+
+        $items = [];
+
+        foreach ($rows as $row) {
+            if (\count($items) >= $count) {
+                break;
+            }
+
+            $items[] = $row;
+        }
+
+        $cursor = (\count($rows) > $count) ? self::getNextCursor($items, $isSortDescending, $field) : null;
+
+        return new CursorPaginationResult(
+            count: 0,
+            items: $items,
+            cursor: $cursor
+        );
+    }
+
     public static function generateEmptyResult(): CursorPaginationResult
     {
         return new CursorPaginationResult(0, [], null);

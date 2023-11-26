@@ -16,7 +16,7 @@ interface Cacher
 
     public function mGet(array $keys): array;
 
-    public function zAdd(string $key, float $score, string|float|int $value): void;
+    public function zAdd(string $key, float $score, float|int|string $value): void;
 
     public function zRangeByScore(
         string $key,
