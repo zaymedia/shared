@@ -11,17 +11,20 @@ class RedisCacher implements Cacher
     private string $host;
     private int $port;
     private string $password;
+    private int $timeout;
 
     private ?Redis $redis = null;
 
     public function __construct(
         string $host,
         int $port,
-        string $password
+        string $password,
+        int $timeout = 0
     ) {
         $this->host = $host;
         $this->port = $port;
         $this->password = $password;
+        $this->timeout = $timeout;
     }
 
     public function get(string $key): ?string
@@ -178,7 +181,7 @@ class RedisCacher implements Cacher
     private function connect(): void
     {
         $this->redis = new Redis();
-        $this->redis->connect($this->host, $this->port);
+        $this->redis->connect($this->host, $this->port, $this->timeout);
         $this->redis->auth($this->password);
     }
 
